@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_bg_7">
+
+    <com.takwolf.android.lock9.Lock9View
+        android:id="@+id/lock_9_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:lock9_nodeSrc="@drawable/node_normal"
+        app:lock9_nodeOnSrc="@drawable/node_active"
+        app:lock9_nodeOnAnim="@anim/node_on_1"
+        app:lock9_padding="28dp"
+        app:lock9_spacing="28dp"
+        app:lock9_lineColor="@color/blue_light"
+        app:lock9_lineWidth="8dp"
+        app:lock9_autoLink="false"
+        app:lock9_enableVibrate="true"
+        app:lock9_vibrateTime="20" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Ваш код: "
+        android:id="@+id/textView"
+        android:layout_gravity="center"
+        android:textColor="@color/blue_light"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/key_space"
+        android:layout_gravity="center"
+        android:textColor="@color/blue_light"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Сохранить"
+        android:id="@+id/saveBtn"
+        android:layout_gravity="bottom"
+        android:background="@drawable/btnface3" />
+
+</LinearLayout>
