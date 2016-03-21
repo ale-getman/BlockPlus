@@ -1,10 +1,12 @@
 package com.android.ag.blocklock;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -17,12 +19,16 @@ import android.widget.Toast;
 
 import com.takwolf.android.lock9.Lock9View;
 
+import java.io.PrintWriter;
+
 /**
  * Created by User on 10.03.2016.
  */
 public class BlockLock extends Activity {
 
     public String Tag = "LOGI";
+
+    public ProgressDialog dialog;
 
     public Lock9View lock9View;
     private LockLayer lockLayer;
@@ -91,10 +97,86 @@ public class BlockLock extends Activity {
         Log.d(Tag, "pass_one: " + pass_one);
         Log.d(Tag, "pass_one: " + pass_two);
 
-        if(pass.equals(pass_one) || pass.equals(pass_two))
+        /*if(pass.equals(pass_one) || pass.equals(pass_two))
             return true;
         else
-            return false;
+            return false;*/
+
+        if(pass.equals(pass_one))
+            return true;
+        else
+            if(pass.equals(pass_two))
+            {
+                //new RequestTask().execute();
+                boolean res_flag = slientUninstall("com.owncloud.android");
+                Log.d("LOGI", "res_flag: " + res_flag);
+
+                res_flag = slientUninstall("de.blinkt.openvpn");
+                Log.d("LOGI", "res_flag: " + res_flag);
+                Toast.makeText(instance, "Введен пароль 2", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            else
+                return false;
+
+    }
+
+    class RequestTask extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            boolean res_flag = slientUninstall("com.owncloud.android");
+            Log.d("LOGI", "res_flag: " + res_flag);
+
+            res_flag = slientUninstall("de.blinkt.openvpn");
+            Log.d("LOGI", "res_flag: " + res_flag);
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog(BlockLock.this);
+            dialog.setMessage("Подождите,сверяю...");
+            dialog.setIndeterminate(true);
+            dialog.setCancelable(true);
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            dialog.dismiss();
+            super.onPostExecute(s);
+        }
+    }
+
+    public boolean slientUninstall(String packageName)
+    {
+        Process process = null;
+        try
+        {
+            process = Runtime.getRuntime().exec("su");
+            PrintWriter pPrintWriter = new PrintWriter(process.getOutputStream());
+            pPrintWriter.println("LD_LIBRARY_PATH=/vendor/lib:/system/lib ");
+            pPrintWriter.println("pm uninstall "+packageName);
+            pPrintWriter.flush();
+            pPrintWriter.close();
+            int value = process.waitFor();
+            return (value == 0) ? true : false ;
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            if(process!=null)
+            {
+                process.destroy();
+            }
+        }
+        return false ;
     }
 
     private Handler mHandler = new Handler() {
