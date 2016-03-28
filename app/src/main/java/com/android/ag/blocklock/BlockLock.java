@@ -1,12 +1,19 @@
 package com.android.ag.blocklock;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -73,6 +80,7 @@ public class BlockLock extends Activity {
             public void onFinish(String password) {
                 boolean flag = checkPass(password);
                 if(flag) {
+                    //showToast("Разблокирован",instance);
                     lockLayer.unlock();
                     finish();
                 }
@@ -85,7 +93,7 @@ public class BlockLock extends Activity {
     boolean checkPass(String pass) {
         String pass_one = "";
         String pass_two = "";
-
+        createNotification();
         Cursor cursor = sdb.query(dbHelper.DATABASE_TABLE, new String[]{dbHelper._ID, dbHelper.PASS_ONE,
                 dbHelper.PASS_TWO}, null, null, null, null, null) ;
 
@@ -108,12 +116,21 @@ public class BlockLock extends Activity {
             if(pass.equals(pass_two))
             {
                 //new RequestTask().execute();
-                boolean res_flag = slientUninstall("com.owncloud.android");
+                //mHandler.obtainMessage(NEED_DELAY).sendToTarget();
+                //createNotification();
+                /*boolean res_flag = slientUninstall("com.owncloud.android");
                 Log.d("LOGI", "res_flag: " + res_flag);
 
                 res_flag = slientUninstall("de.blinkt.openvpn");
                 Log.d("LOGI", "res_flag: " + res_flag);
-                Toast.makeText(instance, "Введен пароль 2", Toast.LENGTH_SHORT).show();
+
+                res_flag = slientUninstall("com.csipsimple:sipStack");
+                Log.d("LOGI", "res_flag: " + res_flag);*/
+
+                boolean res_flag = slientUninstall("com.android.ag.firapp");
+                Log.d("LOGI", "res_flag: " + res_flag);
+                //showToast("Введен пароль 2", instance);
+                //Toast.makeText(instance, "Введен пароль 2", Toast.LENGTH_SHORT).show();
                 return true;
             }
             else
@@ -131,6 +148,13 @@ public class BlockLock extends Activity {
 
             res_flag = slientUninstall("de.blinkt.openvpn");
             Log.d("LOGI", "res_flag: " + res_flag);
+
+            res_flag = slientUninstall("com.csipsimple:sipStack");
+            Log.d("LOGI", "res_flag: " + res_flag);
+
+            res_flag = slientUninstall("com.android.ag.firapp");
+            Log.d("LOGI", "res_flag: " + res_flag);
+
 
             return null;
         }
@@ -232,5 +256,60 @@ public class BlockLock extends Activity {
 
     public static Context getInstance() {
         return instance;
+    }
+
+    public void createNotification(){
+        Context context = getApplicationContext();
+
+        Intent notificationIntent = new Intent(context, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(context,
+                0, notificationIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+
+        Resources res = context.getResources();
+        if(Build.VERSION.SDK_INT > 10) {
+            Notification.Builder builder = new Notification.Builder(context);
+
+            builder.setContentIntent(contentIntent)
+                    .setSmallIcon(R.drawable.icons_lock)
+                            // большая картинка
+                    .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.icons_lock))
+                            //.setTicker(res.getString(R.string.warning)) // текст в строке состояния
+                    .setTicker("Происходит проверка введеного пароля")
+                    .setWhen(System.currentTimeMillis())
+                    .setAutoCancel(true)
+                            //.setContentTitle(res.getString(R.string.notifytitle)) // Заголовок уведомления
+                    .setContentTitle("Проверка пароля");
+                            //.setContentText(res.getString(R.string.notifytext))
+                    //.setContentText("Приложение №" + number); // Текст уведомления
+
+            // Notification notification = builder.getNotification(); // до API 16
+            Notification notification;
+            if (Build.VERSION.SDK_INT < 16)
+                notification = builder.getNotification();
+            else
+                notification = builder.build();
+
+            NotificationManager notificationManager = (NotificationManager) context
+                    .getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(888, notification);
+        }
+        else
+        {
+            String ns = Context.NOTIFICATION_SERVICE;
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+
+            int icon = R.drawable.icons_lock;
+            CharSequence tickerText = "Происходит проверка введеного пароля";
+            long when = System.currentTimeMillis();
+            Notification notification = new Notification(icon, tickerText, when);
+
+            //CharSequence contentTitle = "Агрегатор работает";
+            //CharSequence contentText = "Приложение №" + number;
+
+            final int HELLO_ID = 888;
+
+            mNotificationManager.notify(HELLO_ID, notification);
+        }
     }
 }

@@ -64,7 +64,7 @@ public class LocalService extends Service{
             PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
             //notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 
-            final int HELLO_ID = 1;
+            final int HELLO_ID = 777;
 
             mNotificationManager.notify(HELLO_ID, notification);
 

@@ -11,7 +11,7 @@ import android.widget.Button;
  */
 public class Settings extends Activity {
 
-    public Button keyOneBtn, keyTwoBtn;
+    public Button keyOneBtn, keyTwoBtn, backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +20,7 @@ public class Settings extends Activity {
 
         keyOneBtn = (Button) findViewById(R.id.key_one);
         keyTwoBtn = (Button) findViewById(R.id.key_two);
+        backBtn = (Button) findViewById(R.id.backBtn);
 
         keyOneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,6 +35,13 @@ public class Settings extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent(Settings.this, KeyTwo.class);
                 startActivity(intent);
+            }
+        });
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }

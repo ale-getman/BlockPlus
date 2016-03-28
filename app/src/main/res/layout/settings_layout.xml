@@ -27,6 +27,14 @@
         android:background="@drawable/btnface3"
         android:layout_gravity="center_horizontal"/>
 
+    <Button
+        android:text="Назад"
+        android:layout_height="wrap_content"
+        android:id="@+id/backBtn"
+        android:background="@drawable/btnface3"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
     </LinearLayout>
 
 </LinearLayout>

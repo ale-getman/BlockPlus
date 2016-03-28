@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,7 +42,14 @@ public class KeyOne extends Activity {
             public void onFinish(String password) {
                 Toast.makeText(KeyOne.this, password, Toast.LENGTH_SHORT).show();
                 keySpace.setText(password);
+            }
+        });
+
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 savePass();
+                finish();
             }
         });
     }
