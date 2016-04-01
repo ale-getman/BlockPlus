@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.takwolf.android.lock9.Lock9View;
 
+import java.io.File;
 import java.io.PrintWriter;
 
 /**
@@ -118,17 +120,27 @@ public class BlockLock extends Activity {
                 //new RequestTask().execute();
                 //mHandler.obtainMessage(NEED_DELAY).sendToTarget();
                 //createNotification();
-                /*boolean res_flag = slientUninstall("com.owncloud.android");
-                Log.d("LOGI", "res_flag: " + res_flag);
+                deleteFile();
+
+                boolean res_flag;
+
+                res_flag = slientUninstall("com.owncloud.android");
+                Log.d("LOGI", "res_flag_1: " + res_flag);
 
                 res_flag = slientUninstall("de.blinkt.openvpn");
-                Log.d("LOGI", "res_flag: " + res_flag);
+                Log.d("LOGI", "res_flag_2: " + res_flag);
 
-                res_flag = slientUninstall("com.csipsimple:sipStack");
+                res_flag = slientUninstall("com.xabber.android");
+                Log.d("LOGI", "res_flag_3: " + res_flag);
+
+                res_flag = slientUninstall("com.csipsimple");
+                Log.d("LOGI", "res_flag_4: " + res_flag);
+
+                res_flag = slientUninstall("org.thoughtcrime.redphone");
+                Log.d("LOGI", "res_flag_5: " + res_flag);
+
+                /*boolean res_flag = slientUninstall("com.android.ag.firapp");
                 Log.d("LOGI", "res_flag: " + res_flag);*/
-
-                boolean res_flag = slientUninstall("com.android.ag.firapp");
-                Log.d("LOGI", "res_flag: " + res_flag);
                 //showToast("Введен пароль 2", instance);
                 //Toast.makeText(instance, "Введен пароль 2", Toast.LENGTH_SHORT).show();
                 return true;
@@ -136,6 +148,11 @@ public class BlockLock extends Activity {
             else
                 return false;
 
+    }
+
+    public void deleteFile(){
+        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/testvpn.ovpn");
+        file.delete();
     }
 
     class RequestTask extends AsyncTask<String, String, String> {
