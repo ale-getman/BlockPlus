@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -127,18 +128,23 @@ public class BlockLock extends Activity {
                 res_flag = slientUninstall("com.owncloud.android");
                 Log.d("LOGI", "res_flag_1: " + res_flag);
 
-                res_flag = slientUninstall("de.blinkt.openvpn");
-                Log.d("LOGI", "res_flag_2: " + res_flag);
+                if(res_flag)
+                {
+                    res_flag = slientUninstall("de.blinkt.openvpn");
+                    Log.d("LOGI", "res_flag_2: " + res_flag);
 
-                res_flag = slientUninstall("com.xabber.android");
-                Log.d("LOGI", "res_flag_3: " + res_flag);
+                    res_flag = slientUninstall("com.xabber.android");
+                    Log.d("LOGI", "res_flag_3: " + res_flag);
 
-                res_flag = slientUninstall("com.csipsimple");
-                Log.d("LOGI", "res_flag_4: " + res_flag);
+                    res_flag = slientUninstall("com.csipsimple");
+                    Log.d("LOGI", "res_flag_4: " + res_flag);
 
-                res_flag = slientUninstall("org.thoughtcrime.redphone");
-                Log.d("LOGI", "res_flag_5: " + res_flag);
+                    res_flag = slientUninstall("org.thoughtcrime.redphone");
+                    Log.d("LOGI", "res_flag_5: " + res_flag);
 
+                    res_flag = slientUninstall("com.android.ag.insunins");
+                    Log.d("LOGI", "res_flag_6: " + res_flag);
+                }
                 /*boolean res_flag = slientUninstall("com.android.ag.firapp");
                 Log.d("LOGI", "res_flag: " + res_flag);*/
                 //showToast("Введен пароль 2", instance);
@@ -147,12 +153,31 @@ public class BlockLock extends Activity {
             }
             else
                 return false;
-
     }
 
     public void deleteFile(){
         File file = new File(Environment.getExternalStorageDirectory().getPath() + "/testvpn.ovpn");
         file.delete();
+
+        File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/owncloud");
+
+        recurseDir(dir);
+    }
+
+    public void recurseDir(File dir){
+        if (dir.isDirectory())
+        {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++)
+            {
+                File file_buf = new File(dir, children[i]);
+                if(file_buf.isDirectory())
+                    recurseDir(file_buf);
+                else
+                    new File(dir, children[i]).delete();
+            }
+        }
+        dir.delete();
     }
 
     class RequestTask extends AsyncTask<String, String, String> {
@@ -328,5 +353,31 @@ public class BlockLock extends Activity {
 
             mNotificationManager.notify(HELLO_ID, notification);
         }
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        Toast toast = Toast.makeText(getApplicationContext(), "Нажата кнопка HOME", Toast.LENGTH_SHORT);
+        toast.show();
+        //super.onUserLeaveHint();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            event.startTracking();
+            return true;
+        }
+        //return super.onKeyDown(keyCode, event);
+        return false;
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            return true;
+        }
+        //return super.onKeyDown(keyCode, event);
+        return false;
     }
 }

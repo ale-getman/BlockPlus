@@ -29,6 +29,14 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Выключить"
+        android:id="@+id/disableBtn"
+        android:layout_gravity="center"
+        android:background="@drawable/btnface3"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Настройки"
         android:id="@+id/settingsBtn"
         android:layout_gravity="center"

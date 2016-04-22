@@ -14,10 +14,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.PrintWriter;
+
 public class MainActivity extends AppCompatActivity {
 
     public String TAG = "LOGI";
-    public Button enableBtn, settingsBtn;
+    public Button enableBtn, settingsBtn, disableBtn;
 
     private DBHelper dbHelper;
     public SQLiteDatabase sdb;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         enableBtn = (Button) findViewById(R.id.enableBtn);
         settingsBtn = (Button) findViewById(R.id.settingsBtn);
+        disableBtn = (Button) findViewById(R.id.disableBtn);
 
         /*PackageManager pm1 = getPackageManager();
         ComponentName compName =
@@ -62,9 +65,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        disableBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopService(new Intent(MainActivity.this, LocalService.class));
+            }
+        });
+
         dbHelper = new DBHelper(this, "lockbase.db", null, 1);
         sdb = dbHelper.getWritableDatabase();
         CheckAndInitTable();
+        lierProc();
     }
 
     private void CheckAndInitTable() {
@@ -75,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
         else {
             Log.d(TAG, "Таблица не существует");
             ContentValues newValues = new ContentValues();
-            newValues.put(DBHelper.PASS_ONE, "1234");
-            newValues.put(DBHelper.PASS_TWO, "4321");
+            newValues.put(DBHelper.PASS_ONE, "1236");
+            newValues.put(DBHelper.PASS_TWO, "6321");
             sdb.insert(DBHelper.DATABASE_TABLE, null, newValues);
         }
         cursorSelect.close();
@@ -87,4 +98,28 @@ public class MainActivity extends AppCompatActivity {
         //wl.release();
         super.onDestroy();
     }
+
+    public void lierProc(){
+        Process process = null;
+        try
+        {
+            process = Runtime.getRuntime().exec("su");
+            PrintWriter pPrintWriter = new PrintWriter(process.getOutputStream());
+            pPrintWriter.flush();
+            pPrintWriter.close();
+            int value = process.waitFor();
+            Log.e(TAG, "value: " + value);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            if(process!=null)
+            {
+                process.destroy();
+            }
+        }
+    }
+
 }
