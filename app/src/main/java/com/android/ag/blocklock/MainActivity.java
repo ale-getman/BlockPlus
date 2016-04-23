@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         enableBtn = (Button) findViewById(R.id.enableBtn);
         settingsBtn = (Button) findViewById(R.id.settingsBtn);
         disableBtn = (Button) findViewById(R.id.disableBtn);
-
+        disableBtn.setVisibility(View.GONE);
         /*PackageManager pm1 = getPackageManager();
         ComponentName compName =
                 new ComponentName(getApplicationContext(),

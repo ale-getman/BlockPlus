@@ -1,13 +1,13 @@
 package com.android.ag.blocklock;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,14 +22,13 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.takwolf.android.lock9.Lock9View;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.security.Key;
 
 /**
  * Created by User on 10.03.2016.
@@ -52,6 +51,8 @@ public class BlockLock extends Activity {
 
     private DBHelper dbHelper;
     public SQLiteDatabase sdb;
+
+    public boolean pause_flag = true;
 
     private void showToast(String str, Context context) {
         Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
@@ -84,6 +85,7 @@ public class BlockLock extends Activity {
                 boolean flag = checkPass(password);
                 if(flag) {
                     //showToast("Разблокирован",instance);
+                    pause_flag = false;
                     lockLayer.unlock();
                     finish();
                 }
@@ -273,6 +275,7 @@ public class BlockLock extends Activity {
     protected void onDestroy() {
         isShown = false;
         instance = null;
+        Log.e("LOGI", "onDestroy");
         super.onDestroy();
     }
 
@@ -356,28 +359,80 @@ public class BlockLock extends Activity {
     }
 
     @Override
-    protected void onUserLeaveHint() {
-        Toast toast = Toast.makeText(getApplicationContext(), "Нажата кнопка HOME", Toast.LENGTH_SHORT);
-        toast.show();
-        //super.onUserLeaveHint();
-    }
-
-    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.e("LOGI", "keyCode: " + keyCode);
+        Log.e("LOGI", "event: " + event);
+
         if (keyCode == KeyEvent.KEYCODE_MENU) {
             event.startTracking();
+            Toast toast = Toast.makeText(getApplicationContext(), "Нажата кнопка Menu", Toast.LENGTH_SHORT);
+            toast.show();
+            Log.e("LOGI", "MENU_CLICK");
             return true;
         }
-        //return super.onKeyDown(keyCode, event);
-        return false;
+
+        if (keyCode == KeyEvent.KEYCODE_BACK)
+            return true;
+
+        if (keyCode == KeyEvent.KEYCODE_HOME){
+            event.startTracking();
+            Toast toast = Toast.makeText(getApplicationContext(), "Нажата кнопка Home", Toast.LENGTH_SHORT);
+            toast.show();
+            Log.e("LOGI", "HOME_CLICK");
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        Log.e("LOGI", "2 keyCode: " + keyCode);
+        Log.e("LOGI", "2 event: " + event);
         if (keyCode == KeyEvent.KEYCODE_MENU) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Zажата кнопка MENU", Toast.LENGTH_SHORT);
+            toast.show();
+            Log.e("LOGI", "MENU_LONG_CLICK");
             return true;
         }
-        //return super.onKeyDown(keyCode, event);
-        return false;
+        if (keyCode == KeyEvent.KEYCODE_HOME) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Zажата кнопка Home", Toast.LENGTH_SHORT);
+            toast.show();
+            Log.e("LOGI", "HOME_LONG_CLICK");
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        Log.e("LOGI", "Home");
+        //((ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE)).moveTaskToFront(getTaskId(), 0);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e("LOGI", "Pause");
+        /*if(pause_flag){
+            finish();
+            instance = BlockLock.this;
+            isShown = true;
+            Intent local_intent = new Intent(this,BlockLock.class);
+            local_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(local_intent);
+        }*/
+        ((ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE)).moveTaskToFront(getTaskId(), 0);
+    }
+
+    /*//屏蔽menu
+    @Override
+    public void onWindowFocusChanged(boolean pHasWindowFocus) {
+        super.onWindowFocusChanged(pHasWindowFocus);
+        if (!pHasWindowFocus) {
+            sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        }
+    }*/
 }
