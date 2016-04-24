@@ -62,6 +62,11 @@ public class MainActivity extends AppCompatActivity {
                 wl.acquire();
                 startService(new Intent(MainActivity.this, LocalService.class));
                 finish();
+                BlockLock.isShown = true;
+                Intent jmpSLA = new Intent();
+                jmpSLA.setClass(MainActivity.this, BlockLock.class);
+                jmpSLA.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(jmpSLA);
             }
         });
 
